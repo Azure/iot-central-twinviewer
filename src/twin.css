@@ -1,0 +1,122 @@
+body {
+  background-color: #cfcfcf;
+  height: 100%;
+  width: 100%;
+}
+
+#root, .page {
+  height: 100%;
+  width: 100vw;
+}
+
+a {
+  text-decoration: none;
+}
+
+b {
+  font-weight: 600;
+}
+
+h1, h2, h3 {
+  margin: 0 1rem 1rem 0;
+}
+
+h5 {
+  margin: 0;
+  font-weight: 200;
+  font-size: 0.75rem;
+}
+
+button {
+  cursor: pointer;
+  padding: 1rem;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: lightgray;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+.btn-bar {
+  display: flex;
+}
+
+.btn-inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn-inline>span:first-child {
+  margin-right: 0.5rem;
+}
+
+.page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+  height: 2rem;
+  line-height: 2rem;
+  padding: 0.5rem;
+  background-color: black;
+  color: white;
+  font-weight: 700;
+}
+
+.layout {
+  flex-grow: 1;
+  padding: 1rem;
+  display: flex;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.layout>div {
+  min-width: 40rem;
+}
+
+.layout>div {
+  padding-right: 1rem;
+}
+
+.layout>div .editor {
+  margin-top: 1rem;
+}
+
+.option {
+  height: 9rem;
+}
+
+.option label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.option button:not(:last-child) {
+  margin-right: 0.5rem;
+}
+
+.tall-editor {
+  height: calc(100vh - 17rem);
+}
+
+.small-editor {
+  height: 40rem;
+}
+
+.last-editor {
+  height: calc(100vh - 61rem);
+}
