@@ -58,6 +58,11 @@ This a summary of the UX features
 
  <br />
 
+### __Incoming Desired Twin feature__
+When you connect the device using the option in the tool, you will be able to receive desired twin requests. The incoming payloads will appear in a section called "Incoming Desired Twin". Use a cloud based tool of your choice i.e. IoT Central to send desired twin values to the device and observe the changes in the tool.
+
+ <br />
+
 ### __URL Options__
 You will need to provide parameters on the URL so that the tool has the correct context. Use the standard URL pattern to delimit parameters i.e.
 
@@ -65,12 +70,11 @@ You will need to provide parameters on the URL so that the tool has the correct 
 http://localhost:3000?deviceId=<myDeviceId>&appId=<myAppId>
 ```
 
-
 | Parameter | Description                                     | Mandatory | Type   | Default
 |-----------|-------------------------------------------------|-----------|--------|-------
 | appId     | The ID of the IoT Central application           |     Y     | string | n/a
 | deviceId  | The ID of the device in IoT Central             |     Y     | string | n/a
 | scopeId   | The Scop ID of the IoT Central application      |     N     | string | n/a
-| sasKey    | A URL encoded string for the device's sasKey    |     N     | string | n/a
+| sasKey    | A URL encoded string for the device's SaS Key   |     N     | string | n/a
 | header    | Show the header bar (UX)                        |     N     | bool   | true
 | cloud     | Show the Cloud Twin option (UX)                 |     N     | bool   | true
