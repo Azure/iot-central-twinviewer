@@ -4,7 +4,7 @@ var Registry = require('azure-iothub').Registry;
 const bodyParser = require('body-parser');
 
 var app = express()
-var port = 3000
+var port = 4002
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

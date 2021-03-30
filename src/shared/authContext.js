@@ -1,14 +1,20 @@
+import { Config } from '../config';
 import * as msal from '@azure/msal-browser';
 import * as React from 'react';
 
-const AAD = {
-    clientId: '',
-    tenantId: '',
-    redirect: 'http://localhost:3000'
-}
-
 const Scopes = {
     Central: 'https://apps.azureiotcentral.com/user_impersonation',
+}
+
+export const MsalConfig = {
+    auth: {
+        clientId: Config.AADClientID,
+        authority: Config.AADLoginServer + '/' + Config.AADDirectoryID,
+        redirectUri: Config.AADRedirectURI
+    },
+    cache: {
+        cacheLocation: 'localStorage'
+    }
 }
 
 export const AuthContext = React.createContext({});
@@ -19,16 +25,7 @@ export class AuthProvider extends React.PureComponent {
 
     constructor(props) {
         super(props);
-        this.msalInstance = new msal.PublicClientApplication({
-            auth: {
-                clientId: AAD.clientId,
-                authority: 'https://login.microsoftonline.com/' + AAD.tenantId,
-                redirectUri: 'http://localhost:3000'
-            },
-            cache: {
-                cacheLocation: 'localStorage'
-            }
-        });
+        this.msalInstance = new msal.PublicClientApplication(MsalConfig);
     }
 
     signIn = () => {
@@ -38,7 +35,7 @@ export class AuthProvider extends React.PureComponent {
         this.msalInstance.handleRedirectPromise()
             .then((res) => {
                 loginAccount = res ? res.data.value[0] : this.msalInstance.getAllAccounts()[0];
-                return getAccessTokenForScope(this.msalInstance, Scopes.Central, loginAccount, AAD.redirect);
+                return getAccessTokenForScope(this.msalInstance, Scopes.Central, loginAccount, Config.AADRedirectURI);
             })
             .then(() => {
                 this.setState({ loginAccount, authenticated: true })

@@ -11,7 +11,7 @@ Example
 const AAD = {
     clientId: '532607b1-ce64-4fd3-b48f-5d7d803e0774',
     tenantId: 'c26906ba-01b0-48ec-afd2-ad8a55b1b0fb',
-    redirect: 'http://localhost:3000'
+    redirect: 'http://localhost:4002'
 }
 ```
 Once this step is completed, build the app and run. This is a one time update and you will only need to redo this if you change or create a new AAD application.
@@ -30,14 +30,15 @@ npm run build
 
 ## Run
 From a command line
+
 ```
-npm run app
+node server.js
 ````
 
 ## Usage
 After running the app, visit the following site in a browser
 ```
-http://localhost:3000
+http://localhost:4002
 ````
 
 ### __Instructions__
@@ -67,7 +68,7 @@ When you connect the device using the option in the tool, you will be able to re
 You will need to provide parameters on the URL so that the tool has the correct context. Use the standard URL pattern to delimit parameters i.e.
 
 ```
-http://localhost:3000?deviceId=<myDeviceId>&appId=<myAppId>
+http://localhost:4002?deviceId=<myDeviceId>&appId=<myAppId>
 ```
 
 | Parameter | Description                                     | Mandatory | Type   | Default
