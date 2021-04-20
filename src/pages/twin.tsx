@@ -12,6 +12,9 @@ import { Panel, PanelType, IPanelProps } from '@fluentui/react/lib/Panel';
 import { IRenderFunction } from '@fluentui/react/lib/Utilities';
 import { PrimaryButton } from '@fluentui/react';
 import { ProgressIndicator } from '@fluentui/react/lib/ProgressIndicator';
+import { TeachingBubble } from '@fluentui/react/lib/TeachingBubble';
+import { IButtonProps } from '@fluentui/react/lib/Button';
+import { DirectionalHint } from '@fluentui/react/lib/Callout';
 
 import Monaco from '../components/monaco';
 import DeviceForm from '../components/deviceForm';
@@ -92,6 +95,7 @@ function App() {
   const [deviceTwinClient, setDeviceTwinClient] = React.useState<any>(null);
 
   const [helpPanel, showHelpPanel] = React.useState<boolean>(false);
+  const [teaching, showTeaching] = React.useState<boolean>(true);
 
   // the reported twin as typed in by the user
   const [reportedTwin, setReportedTwin] = React.useState<any>({});
@@ -133,6 +137,8 @@ function App() {
   React.useEffect(() => {
     if (deviceTwinClient) {
       fetchDeviceTwin();
+      fetchCentralTwin();
+      fetchCloudTwin();
     }
   }, [deviceTwinClient])
 
@@ -147,6 +153,12 @@ function App() {
     ),
     [],
   );
+
+  const primaryButtonProps: IButtonProps = {
+    children: 'OK',
+    onClick: () => showTeaching(false)
+
+  };
 
   // main render
   return !authContext.authenticated ?
@@ -168,13 +180,20 @@ function App() {
         <DeviceForm />
       </Panel>
 
-      {!headerUx ? null :
+      {!headerUx ? null : <>
         <div className="header">
           <div className='help'>
-            <button onClick={() => showHelpPanel(true)}><FontIcon iconName='Unknown' />Help</button>
+            <button id='help' onClick={() => showHelpPanel(true)}><FontIcon iconName='Unknown' />Help</button>
           </div>
           <div>{connected ? 'DEVICE CONNECTED' : 'DEVICE NOT CONNECTED'}</div>
         </div>
+
+        {!teaching ? null :
+          <TeachingBubble target="#help" primaryButtonProps={primaryButtonProps} headline="Setup Twin Viewer" calloutProps={{ directionalHint: DirectionalHint.bottomCenter }}>
+            Use Help to setup the application and device for the twin you would like to debug.
+        </TeachingBubble>
+        }
+      </>
       }
 
       <div className='layout'>
@@ -183,10 +202,10 @@ function App() {
           <div className="option">
             <h5>Platform: Azure IoT Central</h5>
             <h2>Central Twin</h2>
-            <label>Get the Central version of Twin using the REST API</label>
+            <label>View the device's twin using the IoT Central Public REST API</label>
             <PrimaryButton className="btn-inline" disabled={!deviceTwinClient} onClick={() => { fetchCentralTwin() }}>Get Central Twin</PrimaryButton>
           </div>
-          {centralTwin ? <Monaco data={centralTwin.twin} size='full' /> : progressFetchCentralTwin ? <ProgressIndicator label="Fetching" /> : null}
+          {centralTwin && deviceContext.connected ? <Monaco data={centralTwin.twin} size='full' /> : progressFetchCentralTwin ? <ProgressIndicator label="Fetching" /> : null}
         </div>
 
         {!cloudUx ? null :
@@ -194,10 +213,10 @@ function App() {
             <div className="option">
               <h5>Platform: Azure IoT Hub</h5>
               <h2>Cloud Twin</h2>
-              <label>Get the Cloud/Hub version of the Twin using the Service SDK</label>
+              <label>View the device's twin in the Cloud/IoT Hub using the Service SDK</label>
               <PrimaryButton className="btn-inline" disabled={!deviceTwinClient} onClick={() => { fetchCloudTwin() }}>Get Cloud Twin</PrimaryButton>
             </div>
-            {cloudTwin ? <Monaco data={cloudTwin} size='full' /> : progressFetchCloudTwin ? <ProgressIndicator label="Fetching" /> : null}
+            {cloudTwin && deviceContext.connected ? <Monaco data={cloudTwin} size='full' /> : progressFetchCloudTwin ? <ProgressIndicator label="Fetching" /> : null}
           </div>
         }
 
@@ -205,7 +224,7 @@ function App() {
           <div className="option">
             <h5>Platform: Device</h5>
             <h2>Device Twin</h2>
-            <label>Connect a simulated version of this device and see the Twin using the Device SDK</label>
+            <label>A simulated version of the device using the Device SDK</label>
             <div className="btn-bar">
               <PrimaryButton className="btn-inline" disabled={!deviceTwinClient} onClick={() => { fetchDeviceTwin() }}>
                 <span>Get Device Twin</span>
@@ -226,7 +245,7 @@ function App() {
           <div className="option">
             <h5>Platform: Device</h5>
             <h2>Report a Device Twin</h2>
-            <label>Send a reported device twin back to the hub using the Device SDK</label>
+            <label>Send a reported device twin to the hub using the Device SDK</label>
             <PrimaryButton className="btn-inline" disabled={!deviceTwinClient} onClick={() => { sendDeviceTwin() }}>
               <span>Send Reported Device Twin</span>
               <span>{progressSendDeviceTwin ? <ClipLoader size={8} /> : null}</span>
@@ -239,13 +258,13 @@ function App() {
           <div className="option">
             <h5>Platform: Device</h5>
             <h2>Report Telemetry</h2>
-            <label>Send telemetry back to the hub using the Device SDK</label>
+            <label>Send telemetry to the hub using the Device SDK</label>
             <PrimaryButton className="btn-inline" disabled={!deviceTwinClient} onClick={() => { sendDeviceTelemetry() }}>
               <span>Send Telemetry</span>
               <span>{progressSendDeviceTelemetry ? <ClipLoader size={8} /> : null}</span>
             </PrimaryButton>
           </div>
-          {deviceTwinClient ? <Monaco data={reportedTwin} onChange={setReportedTelemetry} size='full' /> : ""}
+          {deviceTwinClient ? <Monaco data={reportedTelemetry} onChange={setReportedTelemetry} size='full' /> : ""}
         </div>
       </div>
     </div >

@@ -60,13 +60,25 @@ export class DeviceProvider extends React.PureComponent {
         this.setState({ client: res, connected: res ? true : false });
     }
 
+    async disconnectDevice() {
+        this.setState({
+            connected: false,
+            client: null,
+            appId: '',
+            deviceId: '',
+            scopeId: '',
+            sasKey: '',
+            twinDesired: {}
+        })
+    }
+
     async setDevice({ appId, deviceId, scopeId, sasKey }: { appId: string, deviceId: string, scopeId: string, sasKey: string }, authContext: any) {
         if (scopeId === '' || sasKey === '') {
             const creds: any = await getCentralDeviceCreds(deviceId, appId, authContext);
             scopeId = creds.idScope
             sasKey = creds.symmetricKey.primaryKey
         }
-        const client: any = await connectBrowserDevice(deviceId, scopeId, sasKey, this.setDesired)
+        const client: any = await connectBrowserDevice(deviceId, scopeId, sasKey, this.setDesired.bind(this))
         this.setState({ client, appId, deviceId, scopeId, sasKey, connected: client ? true : false });
     }
 
@@ -84,6 +96,7 @@ export class DeviceProvider extends React.PureComponent {
         twinDesired: any,
         setDevice: any,
         connectDevice: any
+        disconnectDevice: any
     } = {
             connected: false,
             client: null,
@@ -93,7 +106,8 @@ export class DeviceProvider extends React.PureComponent {
             sasKey: '',
             twinDesired: {},
             setDevice: this.setDevice.bind(this),
-            connectDevice: this.connectDevice.bind(this)
+            connectDevice: this.connectDevice.bind(this),
+            disconnectDevice: this.disconnectDevice.bind(this)
         }
 
     render() {

@@ -4,7 +4,7 @@ import React from 'react';
 import { AuthContext } from '../context/authContext';
 import { DeviceContext } from '../context/deviceContext';
 import { TextField } from '@fluentui/react/lib/TextField';
-import { PrimaryButton } from '@fluentui/react';
+import { PrimaryButton, DefaultButton } from '@fluentui/react';
 import { ProgressIndicator } from '@fluentui/react/lib/ProgressIndicator';
 import { FontIcon } from '@fluentui/react/lib/Icon';
 import { Link } from '@fluentui/react';
@@ -54,19 +54,27 @@ function DeviceForm() {
         <TextField value={user} label='Signed-in user' readOnly={true} />
         <p>If this not the correct user, <Link onClick={() => authContext.signOut()} underline={true}>sign-out</Link> and sign back in with the valid user account.</p>
         <br />
-        <h3>Setup the device to debug</h3>
-        <p>Please provide details for the device you would like to connect to and debug.</p>
-        <TextField disabled={false} autoComplete='off' label='Application ID' required={true} name='appId' value={form.appId} onChange={updateField} />
-        <TextField disabled={false} autoComplete='off' label='Device ID' required={true} name='deviceId' value={form.deviceId} onChange={updateField} />
-        <TextField disabled={false} autoComplete='off' label='Scope ID' required={false} name='scopeId' value={form.scopeId} onChange={updateField} placeholder='If blank, Scope ID will be fetched' />
-        <TextField disabled={false} autoComplete='off' label='SaS Key' required={false} name='sasKey' value={form.sasKey} onChange={updateField} placeholder='If blank, Primary Sas Key will be fetched' />
-        <br />
-        <PrimaryButton className='btn-inline' onClick={() => { connectDevice() }}>Connect as device</PrimaryButton>
-        <br />
-        <div className='device-form-simulation'><FontIcon iconName='Warning' /><span>Simulated devices not supported.</span></div>
-        <br />
-        {connectProgress ? <ProgressIndicator label='Connecting' /> : null}
-        {!connectProgress && connected ? 'Connected to device' : ''}
+        {!connectProgress && connected ?
+            <>
+                <span>Connected to device <b>{form.deviceId}</b></span>
+                <br /><br />
+                <DefaultButton className='btn-inline' onClick={() => { deviceContext.disconnectDevice() }}>Disconnect the device</DefaultButton>
+            </> :
+            <>
+                <h3>Setup the device to debug</h3>
+                <p>Please provide details for the device you would like to connect to and debug.</p>
+                <TextField disabled={false} autoComplete='off' label='Application ID' required={true} name='appId' value={form.appId} onChange={updateField} />
+                <TextField disabled={false} autoComplete='off' label='Device ID' required={true} name='deviceId' value={form.deviceId} onChange={updateField} />
+                <TextField disabled={false} autoComplete='off' label='Scope ID' required={false} name='scopeId' value={form.scopeId} onChange={updateField} placeholder='If blank, Scope ID will be fetched' />
+                <TextField disabled={false} autoComplete='off' label='SaS Key' required={false} name='sasKey' value={form.sasKey} onChange={updateField} placeholder='If blank, Primary Sas Key will be fetched' />
+                <br />
+                <PrimaryButton className='btn-inline' onClick={() => { connectDevice() }}>Connect device</PrimaryButton>
+                <br />
+                <div className='device-form-simulation'><FontIcon iconName='Warning' /><span>Simulated devices not supported.</span></div>
+                <br />
+                {connectProgress ? <ProgressIndicator label='Connecting' /> : null}
+            </>
+        }
     </div>
 }
 

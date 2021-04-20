@@ -15,9 +15,7 @@ function Monaco({ data, size, onChange }: { data: any, size: 'full' | 'medium' |
         }
     }, [data]);
 
-    const change = (value: any) => {
-        onChange(value)
-    }
+    const options = onChange ? { onChange: (value: any) => { onChange(value) } } : {};
 
     return <div className={'monaco monaco-' + size}>
         <Editor options={{
@@ -32,7 +30,7 @@ function Monaco({ data, size, onChange }: { data: any, size: 'full' | 'medium' |
             matchBrackets: 'never',
             renderIndentGuides: false
         }}
-            onChange={change}
+            {...options}
             language="json"
             defaultValue={jsonData}
             value={jsonData}
