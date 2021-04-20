@@ -67,19 +67,6 @@ button:disabled {
   flex-direction: column;
 }
 
-.header {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex-shrink: 0;
-  height: 2rem;
-  line-height: 2rem;
-  padding: 0.5rem;
-  background-color: black;
-  color: white;
-  font-weight: 700;
-}
-
 .layout {
   flex-grow: 1;
   padding: 0 1rem 0 1rem;
@@ -125,8 +112,20 @@ button:disabled {
   height: calc(100vh - 61rem);
 }
 
-.help i {
+.header {
+  white-space: nowrap;
+  overflow: hidden;
+  flex-shrink: 0;
+  height: 2rem;
+  line-height: 2rem;
+  padding: 0.5rem 1rem 0.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-weight: 900;
+}
+
+.help i {
   margin-right: 0.25rem;
 }
 

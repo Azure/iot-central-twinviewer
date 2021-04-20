@@ -1,12 +1,12 @@
+import './twin.css';
+
 import React from 'react';
 import axios from 'axios';
-import './twin.css';
+
 import { AuthContext } from '../context/authContext';
-import { Json } from '../components/json'
+import { DeviceContext } from '../context/deviceContext';
 import { usePromise } from '../hooks/usePromise';
-import { AzDpsClient } from '../lib/AzDpsClient.js'
-import { AzIoTHubClient } from '../lib/AzIoTHubClient.js'
-import ClipLoader from "react-spinners/ClipLoader";
+
 import { FontIcon } from '@fluentui/react/lib/Icon';
 import { Panel, PanelType, IPanelProps } from '@fluentui/react/lib/Panel';
 import { IRenderFunction } from '@fluentui/react/lib/Utilities';
@@ -14,34 +14,8 @@ import { PrimaryButton } from '@fluentui/react';
 import { ProgressIndicator } from '@fluentui/react/lib/ProgressIndicator';
 
 import Monaco from '../components/monaco';
-
-// this creates a real device client in the browser
-async function connectBrowserDevice(deviceId: any, scopeId: any, sasKey: any, setDesired: any) {
-  const dpsClient = new AzDpsClient(scopeId, deviceId, sasKey);
-  const result = await dpsClient.registerDevice();
-  if (result.status === 'assigned') {
-    const host = result.registrationState.assignedHub;
-
-    const client = new AzIoTHubClient(host, deviceId, sasKey);
-    client.setDirectMehodCallback((method: any, payload: any, rid: any) => {
-      // not exposed in the UX    
-    });
-
-    client.setDesiredPropertyCallback((desired: any) => {
-      setDesired(JSON.parse(desired || ''));
-    });
-
-    client.disconnectCallback = ((err: any) => {
-      console.log(err)
-      console.log('Disconnected');
-    });
-
-    await client.connect();
-    return client;
-  } else {
-    return { 'error': 'NOTASSIGNED: ' + result.status };
-  }
-}
+import DeviceForm from '../components/deviceForm';
+import ClipLoader from "react-spinners/ClipLoader";
 
 async function getCentralTwin(deviceId: any, appId: any, authContext: any) {
   try {
@@ -85,7 +59,7 @@ async function getDeviceTwin(client: any) {
 
 async function writeDeviceTwin(client: any, payload: any) {
   try {
-    const updateResult = await client.updateTwin(JSON.stringify(payload));
+    const updateResult = await client.updateTwin(payload);
     if (updateResult === 204) {
       const twin = await client.getTwin()
       return { reported: twin.reported, desired: twin.desired }
@@ -98,7 +72,7 @@ async function writeDeviceTwin(client: any, payload: any) {
 
 async function writeDeviceTelemetry(client: any, payload: any) {
   try {
-    await client.sendTelemetry(JSON.stringify(payload));
+    await client.sendTelemetry(payload);
     return payload; // just return something
   }
   catch (err) {
@@ -110,9 +84,12 @@ function App() {
 
   // provide access to authentication and authorization results
   const authContext = React.useContext<any>(AuthContext);
+  const deviceContext = React.useContext<any>(DeviceContext);
 
   // the desired twin payload received when the device is connected
+  const [connected, setConnected] = React.useState<any>(deviceContext.connected);
   const [desired, setDesired] = React.useState<any>({});
+  const [deviceTwinClient, setDeviceTwinClient] = React.useState<any>(null);
 
   const [helpPanel, showHelpPanel] = React.useState<boolean>(false);
 
@@ -122,29 +99,42 @@ function App() {
   // the reported telemetry as typed in by the user
   const [reportedTelemetry, setReportedTelemetry] = React.useState<any>({});
 
-  // use url params to provide the deviceId and application Id (mandatory)
+  // // use url params to provide the deviceId and application Id (mandatory)
   const urlParams = new URLSearchParams(window.location.search);
-  const appId = urlParams && urlParams.get('appId') ? urlParams.get('appId') : '';
-  const deviceId = urlParams && urlParams.get('deviceId') ? urlParams.get('deviceId') : '';
   const headerUx = urlParams && urlParams.get('header') && urlParams.get('header') === "false" ? false : true;
   const cloudUx = urlParams && urlParams.get('cloud') && urlParams.get('cloud') === "false" ? false : true;
 
   // all the async data loading methods
-  const [progressFetchCentralTwin, centralTwin, , fetchCentralTwin] = usePromise({ promiseFn: () => getCentralTwin(deviceId, appId, authContext) });
-  const [progressFetchCloudTwin, cloudTwin, , fetchCloudTwin] = usePromise({ promiseFn: () => getCloudTwin(deviceId, appId, authContext) });
-  const [progressFetchDeviceClient, deviceTwinClient, , fetchDeviceTwinClient] = usePromise({ promiseFn: () => connectBrowserDevice(deviceId, scopeId, sasKey, setDesired) });
+  //const [progressFetchDeviceClient, deviceTwinClient, , fetchDeviceTwinClient] = usePromise({ promiseFn: () => deviceContext.connectDevice() });
+
+  const [progressFetchCentralTwin, centralTwin, , fetchCentralTwin] = usePromise({ promiseFn: () => getCentralTwin(deviceContext.deviceId, deviceContext.appId, authContext) });
+  const [progressFetchCloudTwin, cloudTwin, , fetchCloudTwin] = usePromise({ promiseFn: () => getCloudTwin(deviceContext.deviceId, deviceContext.appId, authContext) });
   const [progressFetchDeviceTwin, deviceTwin, , fetchDeviceTwin] = usePromise({ promiseFn: () => getDeviceTwin(deviceTwinClient) });
   const [progressSendDeviceTwin, , , sendDeviceTwin] = usePromise({ promiseFn: () => writeDeviceTwin(deviceTwinClient, reportedTwin) });
   const [progressSendDeviceTelemetry, , , sendDeviceTelemetry] = usePromise({ promiseFn: () => writeDeviceTelemetry(deviceTwinClient, reportedTelemetry) });
-
-  // use the url to override (or shortcut) getting the scopeId and sasKey
-  const scopeId = urlParams && urlParams.get('scopeId') ? urlParams.get('scopeId') : centralTwin ? centralTwin.credentials.idScope : '';
-  const sasKey = urlParams && urlParams.get('sasKey') ? decodeURI(urlParams.get('sasKey') || '') : centralTwin ? centralTwin.credentials.symmetricKey.primaryKey : '';
 
   // first render cycle. do silent authentication
   React.useEffect(() => {
     authContext.signIn();
   }, [authContext]);
+
+  React.useEffect(() => {
+    setConnected(deviceContext.connected);
+  }, [deviceContext.connected])
+
+  React.useEffect(() => {
+    setDeviceTwinClient(deviceContext.client);
+  }, [deviceContext.client])
+
+  React.useEffect(() => {
+    setDesired(deviceContext.twinDesired);
+  }, [deviceContext.twinDesired])
+
+  React.useEffect(() => {
+    if (deviceTwinClient) {
+      fetchDeviceTwin();
+    }
+  }, [deviceTwinClient])
 
   const onRenderNavigationContent: IRenderFunction<IPanelProps> = React.useCallback(
     (props, defaultRender) => (
@@ -174,13 +164,16 @@ function App() {
         isOpen={helpPanel}
         customWidth={'320px'}
         onDismiss={() => { showHelpPanel(false) }}
-        onRenderNavigationContent={onRenderNavigationContent}
-      ></Panel>
+        onRenderNavigationContent={onRenderNavigationContent}>
+        <DeviceForm />
+      </Panel>
 
       {!headerUx ? null :
-        // <div className="header">Device ID: {deviceId === '' ? '(Need Device ID)' : deviceId} / Application ID: {appId === '' ? '(Need Application ID)' : appId} / Scope ID: {scopeId === '' ? '(Get From Central Twin call)' : scopeId} / Sas Key ID: {sasKey === '' ? '(Get From Central Twin call)' : sasKey}</div>
-        <div className='help'>
-          <button onClick={() => showHelpPanel(true)}><FontIcon iconName='Unknown' />Help</button>
+        <div className="header">
+          <div className='help'>
+            <button onClick={() => showHelpPanel(true)}><FontIcon iconName='Unknown' />Help</button>
+          </div>
+          <div>{connected ? 'DEVICE CONNECTED' : 'DEVICE NOT CONNECTED'}</div>
         </div>
       }
 
@@ -191,9 +184,9 @@ function App() {
             <h5>Platform: Azure IoT Central</h5>
             <h2>Central Twin</h2>
             <label>Get the Central version of Twin using the REST API</label>
-            <PrimaryButton className="btn-inline" onClick={() => { fetchCentralTwin() }}>Get Central Twin</PrimaryButton>
+            <PrimaryButton className="btn-inline" disabled={!deviceTwinClient} onClick={() => { fetchCentralTwin() }}>Get Central Twin</PrimaryButton>
           </div>
-          {centralTwin ? <Monaco data={centralTwin.twin} /> : progressFetchCentralTwin ? <ProgressIndicator label="Fetching" /> : null}
+          {centralTwin ? <Monaco data={centralTwin.twin} size='full' /> : progressFetchCentralTwin ? <ProgressIndicator label="Fetching" /> : null}
         </div>
 
         {!cloudUx ? null :
@@ -202,9 +195,9 @@ function App() {
               <h5>Platform: Azure IoT Hub</h5>
               <h2>Cloud Twin</h2>
               <label>Get the Cloud/Hub version of the Twin using the Service SDK</label>
-              <PrimaryButton className="btn-inline" onClick={() => { fetchCloudTwin() }}>Get Cloud Twin</PrimaryButton>
+              <PrimaryButton className="btn-inline" disabled={!deviceTwinClient} onClick={() => { fetchCloudTwin() }}>Get Cloud Twin</PrimaryButton>
             </div>
-            {cloudTwin ? <Monaco data={cloudTwin} /> : progressFetchCloudTwin ? <ProgressIndicator label="Fetching" /> : null}
+            {cloudTwin ? <Monaco data={cloudTwin} size='full' /> : progressFetchCloudTwin ? <ProgressIndicator label="Fetching" /> : null}
           </div>
         }
 
@@ -214,27 +207,19 @@ function App() {
             <h2>Device Twin</h2>
             <label>Connect a simulated version of this device and see the Twin using the Device SDK</label>
             <div className="btn-bar">
-              <PrimaryButton className="btn-inline" disabled={scopeId === '' || sasKey === ''} onClick={() => { fetchDeviceTwinClient() }}>
-                <span>{deviceTwinClient ? "Re-Connect" : "Connect"}</span>
-                <span>{progressFetchDeviceClient ? <ClipLoader size={8} /> : null}</span>
-              </PrimaryButton>
-              <PrimaryButton className="btn-inline" onClick={() => { fetchDeviceTwin() }}>
+              <PrimaryButton className="btn-inline" disabled={!deviceTwinClient} onClick={() => { fetchDeviceTwin() }}>
                 <span>Get Device Twin</span>
                 <span>{progressFetchDeviceTwin ? <ClipLoader size={8} /> : null}</span>
               </PrimaryButton>
             </div>
           </div>
-          <div className="editor">
-            {deviceTwinClient ?
-              <>
-                <div className='small-editor'>
-                  {deviceTwin && !progressFetchDeviceTwin ? <Json json={deviceTwin} liveUpdate={true} className='small-editor' /> : progressFetchDeviceTwin ? 'Fetching' : 'Click to view the latest version of the Cloud\'s full Twin from the device'}
-                </div>
-                <h4>Incoming Desired Twin</h4>
-                {desired ? <Json json={desired} liveUpdate={true} className='last-editor' /> : "Waiting... Send a desired property to this device from your cloud based application i.e. IoT Central"}
-              </>
-              : progressFetchDeviceClient ? "Connecting" : ""}
-          </div>
+          {deviceTwinClient ?
+            <>
+              {deviceTwin && !progressFetchDeviceTwin ? <Monaco data={deviceTwin} size='medium' /> : progressFetchDeviceTwin ? 'Fetching' : 'Click to view the latest version of the Cloud\'s full Twin from the device'}
+              <h4>Incoming Desired Twin</h4>
+              {desired ? <Monaco data={desired} size='small' /> : "Waiting... Send a desired property to this device from your cloud based application i.e. IoT Central"}
+            </>
+            : ""}
         </div>
 
         <div className="column">
@@ -247,9 +232,7 @@ function App() {
               <span>{progressSendDeviceTwin ? <ClipLoader size={8} /> : null}</span>
             </PrimaryButton>
           </div>
-          <div className="editor">
-            {deviceTwinClient ? <Json json={reportedTwin} onChange={setReportedTwin} liveUpdate={false} className='tall-editor' /> : ""}
-          </div>
+          {deviceTwinClient ? <Monaco data={reportedTwin} onChange={setReportedTwin} size='full' /> : ""}
         </div>
 
         <div className="column">
@@ -262,11 +245,7 @@ function App() {
               <span>{progressSendDeviceTelemetry ? <ClipLoader size={8} /> : null}</span>
             </PrimaryButton>
           </div>
-
-          <div className="editor">
-            {deviceTwinClient ? <Json json={reportedTelemetry} onChange={setReportedTelemetry} liveUpdate={false} className='tall-editor' /> : ""}
-          </div>
-
+          {deviceTwinClient ? <Monaco data={reportedTwin} onChange={setReportedTelemetry} size='full' /> : ""}
         </div>
       </div>
     </div >

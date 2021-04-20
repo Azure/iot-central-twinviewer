@@ -3,15 +3,23 @@ import Editor from "@monaco-editor/react";
 
 import React from 'react';
 
-function Monaco({ data }: { data: any }) {
+function Monaco({ data, size, onChange }: { data: any, size: 'full' | 'medium' | 'small', onChange?: any }) {
 
     const [jsonData, setJsonData] = React.useState<any>();
 
     React.useEffect(() => {
-        setJsonData(JSON.stringify(data, null, 2));
+        if (typeof data === 'object' && data !== null) {
+            setJsonData(JSON.stringify(data, null, 2));
+        } else {
+            setJsonData(data);
+        }
     }, [data]);
 
-    return <div className='monaco-tall'>
+    const change = (value: any) => {
+        onChange(value)
+    }
+
+    return <div className={'monaco monaco-' + size}>
         <Editor options={{
             renderLineHighlight: 'none',
             wordWrap: 'on',
@@ -24,7 +32,7 @@ function Monaco({ data }: { data: any }) {
             matchBrackets: 'never',
             renderIndentGuides: false
         }}
-            onChange={() => { }}
+            onChange={change}
             language="json"
             defaultValue={jsonData}
             value={jsonData}

@@ -1,0 +1,8 @@
+.device-form-simulation {
+    display: flex;
+    align-items: center;
+}
+
+.device-form-simulation i {
+    margin-right: 0.25rem;
+}
