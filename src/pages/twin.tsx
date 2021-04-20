@@ -1,9 +1,9 @@
 import React from 'react';
 import axios from 'axios';
 import './twin.css';
-import { AuthContext } from '../shared/authContext';
-import { Json } from '../shared/json'
-import { usePromise } from '../shared/usePromise';
+import { AuthContext } from '../context/authContext';
+import { Json } from '../components/json'
+import { usePromise } from '../hooks/usePromise';
 import { AzDpsClient } from '../lib/AzDpsClient.js'
 import { AzIoTHubClient } from '../lib/AzIoTHubClient.js'
 import ClipLoader from "react-spinners/ClipLoader";
