@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-export const usePromise = ({ promiseFn }) => {
-    const [loading, setLoading] = React.useState(false);
-    const [data, setData] = React.useState(null);
-    const [error, setError] = React.useState(null);
+export const usePromise = ({ promiseFn }: { promiseFn: any }) => {
+    const [loading, setLoading] = React.useState<boolean>(false);
+    const [data, setData] = React.useState<any>(null);
+    const [error, setError] = React.useState<any>(null);
 
     const callPromise = async () => {
         setLoading(true);
@@ -12,8 +12,8 @@ export const usePromise = ({ promiseFn }) => {
         try {
             const res = await promiseFn();
             setData(res);
-        } catch (error) {
-            setError({ error: error });
+        } catch (error: any) {
+            setError(error);
         }
         setLoading(false);
     };

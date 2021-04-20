@@ -21,9 +21,9 @@ export const AuthContext = React.createContext({});
 
 export class AuthProvider extends React.PureComponent {
 
-    msalInstance = null;
+    private msalInstance: any = null;
 
-    constructor(props) {
+    constructor(props: any) {
         super(props);
         this.msalInstance = new msal.PublicClientApplication(MsalConfig);
     }
@@ -33,9 +33,9 @@ export class AuthProvider extends React.PureComponent {
 
         let loginAccount = {};
         this.msalInstance.handleRedirectPromise()
-            .then((res) => {
+            .then((res: any) => {
                 loginAccount = res ? res.data.value[0] : this.msalInstance.getAllAccounts()[0];
-                return getAccessTokenForScope(this.msalInstance, Scopes.Central, loginAccount, Config.AADRedirectURI);
+                return getAccessTokenForScope(this.msalInstance, Scopes.Central, loginAccount);
             })
             .then(() => {
                 this.setState({ loginAccount, authenticated: true })
@@ -50,7 +50,7 @@ export class AuthProvider extends React.PureComponent {
     }
 
     getAccessToken = async () => {
-        const res = await getAccessTokenForScope(this.msalInstance, Scopes.Central, this.state.loginAccount);
+        const res: any = await getAccessTokenForScope(this.msalInstance, Scopes.Central, this.state.loginAccount);
         return res.accessToken;
     }
 
@@ -71,30 +71,29 @@ export class AuthProvider extends React.PureComponent {
     }
 }
 
-function getAccessTokenForScope(msalInstance, scope, account, redirect) {
-    const tokenRequest = {
+function getAccessTokenForScope(msalInstance: any, scope: any, account: any) {
+    const tokenRequest: any = {
         scopes: Array.isArray(scope) ? scope : [scope],
         forceRefresh: false,
-        redirectUri: redirect
+        redirectUri: Config.AADRedirectURI
     };
 
     if (account) { tokenRequest.account = account };
 
     return new Promise((resolve, reject) => {
         msalInstance.acquireTokenSilent(tokenRequest)
-            .then((res) => {
+            .then((res: any) => {
                 resolve(res)
             })
-            .catch((err) => {
+            .catch((err: any) => {
                 if (err.name === 'BrowserAuthError') {
                     msalInstance.acquireTokenPopup(tokenRequest)
-                        .then((res) => {
+                        .then((res: any) => {
                             resolve(res)
                         })
-                        .catch((err) => {
+                        .catch((err: any) => {
                             reject(err);
                         })
-
                 } else {
                     reject(err);
                 }

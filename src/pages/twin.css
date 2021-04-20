@@ -9,6 +9,10 @@ body {
   width: 100vw;
 }
 
+.page-initial {
+  padding: 1rem;
+}
+
 a {
   text-decoration: none;
 }
@@ -18,7 +22,7 @@ b {
 }
 
 h1, h2, h3 {
-  margin: 0 1rem 1rem 0;
+  margin: 0 1rem 0 0;
 }
 
 h5 {
@@ -78,7 +82,7 @@ button:disabled {
 
 .layout {
   flex-grow: 1;
-  padding: 1rem;
+  padding: 0 1rem 0 1rem;
   display: flex;
   height: 100%;
   overflow-y: auto;
@@ -97,7 +101,7 @@ button:disabled {
 }
 
 .option {
-  height: 9rem;
+  height: 8rem;
 }
 
 .option label {
@@ -119,4 +123,24 @@ button:disabled {
 
 .last-editor {
   height: calc(100vh - 61rem);
+}
+
+.help i {
+  font-weight: 900;
+  margin-right: 0.25rem;
+}
+
+.help button {
+  font-size: 1.2rem;
+  background-color: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  outline: none;
+}
+
+.help-panel-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
 }
