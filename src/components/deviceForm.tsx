@@ -52,24 +52,24 @@ function DeviceForm() {
         <h3>Setup the user</h3>
         <p>Ensure the following user has been added to the IoT Central application before setting up the device.</p>
         <TextField value={user} label='Signed-in user' readOnly={true} />
-        <p>If this not the correct user, <Link onClick={() => authContext.signOut()} underline={true}>sign-out</Link> and sign back in with the valid user account.</p>
+        <p>If this is not the correct user, <Link onClick={() => authContext.signOut()} underline={true}>sign-out</Link> and sign back in with a different account.</p>
         <br />
         <h3>Setup the device to debug</h3>
         {!connectProgress && connected ?
             <>
-                <p>Connected to device <b>{form.deviceId}</b></p>
+                <p>Currently connected to device <b>{form.deviceId}</b></p>
                 <DefaultButton className='btn-inline' onClick={() => { deviceContext.disconnectDevice() }}>Disconnect the device</DefaultButton>
             </> :
             <>
                 <p>Please provide details for the device you would like to connect to and debug.</p>
                 <TextField disabled={false} autoComplete='off' label='Application ID' required={true} name='appId' value={form.appId} onChange={updateField} />
                 <TextField disabled={false} autoComplete='off' label='Device ID' required={true} name='deviceId' value={form.deviceId} onChange={updateField} />
-                <TextField disabled={false} autoComplete='off' label='Scope ID' required={false} name='scopeId' value={form.scopeId} onChange={updateField} placeholder='If blank, Scope ID will be fetched' />
-                <TextField disabled={false} autoComplete='off' label='SaS Key' required={false} name='sasKey' value={form.sasKey} onChange={updateField} placeholder='If blank, Primary Sas Key will be fetched' />
+                <TextField disabled={false} autoComplete='off' label='Scope ID' required={false} name='scopeId' value={form.scopeId} onChange={updateField} placeholder='Can be left blank' />
+                <TextField disabled={false} autoComplete='off' label='SaS Key' required={false} name='sasKey' value={form.sasKey} onChange={updateField} placeholder='Can be left blank' />
                 <br />
                 <PrimaryButton className='btn-inline' onClick={() => { connectDevice() }}>Connect device</PrimaryButton>
                 <br /><br />
-                <div className='device-form-simulation'><FontIcon iconName='Warning' /><span>Simulated devices not supported.</span></div>
+                <div className='device-form-simulation'><FontIcon iconName='Warning' /><span>Simulated devices are not supported.</span></div>
                 <br />
                 {connectProgress ? <ProgressIndicator label='Connecting' /> : null}
             </>
