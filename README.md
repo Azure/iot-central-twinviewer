@@ -33,7 +33,7 @@ npm run build
 From a command line
 
 ```
-node server.js
+npm run start
 ````
 
 ## Usage
