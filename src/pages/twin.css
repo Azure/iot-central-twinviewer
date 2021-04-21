@@ -1,0 +1,101 @@
+body {
+  background-color: #f7f7f7;
+  height: 100%;
+  width: 100%;
+}
+
+#root, .page {
+  height: 100%;
+  width: 100%;
+}
+
+.page-initial {
+  padding: 1rem;
+}
+
+.btn-bar {
+  display: flex;
+}
+
+.page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.layout {
+  flex-grow: 1;
+  padding: 0 1rem 0 1.5rem;
+  display: flex;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.layout>div {
+  min-width: 40rem;
+}
+
+.layout>div {
+  padding-right: 1rem;
+}
+
+.option {
+  height: 8rem;
+}
+
+.option label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.header {
+  white-space: nowrap;
+  overflow: hidden;
+  flex-shrink: 0;
+  height: 2rem;
+  line-height: 2rem;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header>div:nth-child(2) {
+  font-weight: 600;
+}
+
+.help-panel-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 1.5rem 1rem;
+}
+
+.help-panel-header .help>button {
+  cursor: pointer;
+  font-size: 1rem;
+  background-color: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  outline: none;
+}
+
+.help i {
+  margin-right: 0.25rem;
+}
+
+.help button {
+  cursor: pointer;
+  font-size: 1rem;
+  background-color: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  outline: none;
+}
+
+.cliploader-spacer {
+  margin-left: 0.25rem;
+}

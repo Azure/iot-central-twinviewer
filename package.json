@@ -1,20 +1,22 @@
 {
-  "name": "baseline",
-  "version": "0.1.0",
+  "name": "iotc-twinviewer",
+  "version": "1.0.0",
   "private": true,
+  "main": "./server.js",
   "dependencies": {
     "@azure/msal-browser": "^2.10.0",
     "@azure/msal-react": "^1.0.0-alpha.3",
+    "@fluentui/react": "^8.11.1",
+    "@monaco-editor/react": "^4.1.1",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.6.0",
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "azure-iothub": "^1.13.1",
     "body-parser": "^1.19.0",
     "cra-build-watch": "^3.4.0",
     "cross-env": "^7.0.3",
     "express": "^4.17.1",
-    "jsoneditor": "^9.1.9",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
@@ -22,8 +24,8 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
-    "app": "node server.js",
-    "start": "cross-env PORT=4002 react-scripts start",
+    "start": "node server.js",
+    "start-cra": "cross-env PORT=4002 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -46,5 +48,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.3",
+    "typescript": "^4.2.0"
   }
 }

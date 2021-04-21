@@ -8,3 +8,13 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+h1, h2, h3 {
+  margin: 0 1rem 0 0;
+}
+
+h5 {
+  margin: 0;
+  font-weight: 200;
+  font-size: 0.75rem;
+}
