@@ -1,5 +1,5 @@
 import './monaco.css';
-import Editor from "@monaco-editor/react";
+import Editor from '@monaco-editor/react';
 
 import React from 'react';
 
@@ -35,7 +35,7 @@ function Monaco({ data, size, onChange }: { data: any, size: 'full' | 'medium' |
             renderIndentGuides: false
         }}
             {...options}
-            language="json"
+            language='json'
             defaultValue={jsonData}
             value={jsonData}
         />

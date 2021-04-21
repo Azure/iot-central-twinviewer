@@ -35,7 +35,7 @@ async function connectBrowserDevice(deviceId: any, scopeId: any, sasKey: any, se
 async function getCentralDeviceCreds(deviceId: any, appId: any, authContext: any) {
     try {
         const at = await authContext.getAccessToken();
-        const credentials = await axios(`https://${appId}.azureiotcentral.com/api/preview/devices/${deviceId}/credentials`, { headers: { "Authorization": "Bearer " + at } });
+        const credentials = await axios(`https://${appId}.azureiotcentral.com/api/preview/devices/${deviceId}/credentials`, { headers: { 'Authorization': 'Bearer ' + at } });
         return credentials.data;
     } catch (err) {
         throw err

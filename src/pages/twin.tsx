@@ -18,13 +18,13 @@ import { DirectionalHint } from '@fluentui/react/lib/Callout';
 
 import Monaco from '../components/monaco';
 import DeviceForm from '../components/deviceForm';
-import ClipLoader from "react-spinners/ClipLoader";
+import ClipLoader from 'react-spinners/ClipLoader';
 
 async function getCentralTwin(deviceId: any, appId: any, authContext: any) {
   try {
     const at = await authContext.getAccessToken();
-    const properties = await axios(`https://${appId}.azureiotcentral.com/api/preview/devices/${deviceId}/properties`, { headers: { "Authorization": "Bearer " + at } });
-    const credentials = await axios(`https://${appId}.azureiotcentral.com/api/preview/devices/${deviceId}/credentials`, { headers: { "Authorization": "Bearer " + at } });
+    const properties = await axios(`https://${appId}.azureiotcentral.com/api/preview/devices/${deviceId}/properties`, { headers: { 'Authorization': 'Bearer ' + at } });
+    const credentials = await axios(`https://${appId}.azureiotcentral.com/api/preview/devices/${deviceId}/credentials`, { headers: { 'Authorization': 'Bearer ' + at } });
     return { twin: properties.data, credentials: credentials.data };
   } catch (err) {
     throw err
@@ -35,14 +35,14 @@ async function getCloudTwin(deviceId: any, appId: any, authContext: any) {
   let hubs: any = {};
   try {
     const at = await authContext.getAccessToken();
-    hubs = await axios.post(`https://${appId}.azureiotcentral.com/system/iothubs/generateSasTokens`, {}, { headers: { "Authorization": "Bearer " + at } });
+    hubs = await axios.post(`https://${appId}.azureiotcentral.com/system/iothubs/generateSasTokens`, {}, { headers: { 'Authorization': 'Bearer ' + at } });
   } catch {
     throw new Error('Device not found');
   }
 
   for (const key in hubs.data) {
     try {
-      const res = await axios.get('/api/twin/' + deviceId, { headers: { "Authorization": hubs.data[key].iothubTenantSasToken.sasToken } })
+      const res = await axios.get('/api/twin/' + deviceId, { headers: { 'Authorization': hubs.data[key].iothubTenantSasToken.sasToken } })
       return res.data;
     } catch {
       // an error means the twin is not found or cannot be fetched. Just move to the next hub
@@ -106,8 +106,8 @@ function App() {
 
   // // use url params to provide the deviceId and application Id (mandatory)
   const urlParams = new URLSearchParams(window.location.search);
-  const headerUx = urlParams && urlParams.get('header') && urlParams.get('header') === "false" ? false : true;
-  const cloudUx = urlParams && urlParams.get('cloud') && urlParams.get('cloud') === "false" ? false : true;
+  const headerUx = urlParams && urlParams.get('header') && urlParams.get('header') === 'false' ? false : true;
+  const cloudUx = urlParams && urlParams.get('cloud') && urlParams.get('cloud') === 'false' ? false : true;
 
   // all the async data loading methods
   const [progressFetchCentralTwin, centralTwin, , fetchCentralTwin] = usePromise({ promiseFn: () => getCentralTwin(deviceContext.deviceId, deviceContext.appId, authContext) });
@@ -167,14 +167,14 @@ function App() {
 
   // main render
   return !authContext.authenticated ?
-    <div className="page-initial">
+    <div className='page-initial'>
       <h2>Please wait</h2>
-      <ProgressIndicator label="Waiting for authentication" />
+      <ProgressIndicator label='Waiting for authentication' />
     </div>
     :
-    <div className="page">
+    <div className='page'>
       <Panel
-        headerText=""
+        headerText=''
         hasCloseButton={false}
         isLightDismiss={true}
         type={PanelType.customNear}
@@ -185,7 +185,7 @@ function App() {
         <DeviceForm />
       </Panel>
       {!headerUx ? null : <>
-        <div className="header">
+        <div className='header'>
           <div className='help'>
             <button id='help' onClick={() => showHelpPanel(true)}><FontIcon iconName='Unknown' />Help</button>
           </div>
@@ -193,42 +193,42 @@ function App() {
         </div>
 
         {!teaching ? null :
-          <TeachingBubble target="#help" primaryButtonProps={primaryButtonProps} headline="Setup Twin Viewer" calloutProps={{ directionalHint: DirectionalHint.bottomCenter }}>
+          <TeachingBubble target='#help' primaryButtonProps={primaryButtonProps} headline='Setup Twin Viewer' calloutProps={{ directionalHint: DirectionalHint.bottomCenter }}>
             Use Help to setup the application and device for the twin you would like to debug.
         </TeachingBubble>
         }
       </>
       }
       <div className='layout'>
-        <div className="column">
-          <div className="option">
+        <div className='column'>
+          <div className='option'>
             <h5>Platform: Azure IoT Central</h5>
             <h2>Central Twin</h2>
             <label>View the device's twin using the IoT Central Public REST API</label>
             <PrimaryButton disabled={!deviceTwinClient} onClick={() => { fetchCentralTwin() }}>Get Central Twin</PrimaryButton>
           </div>
-          {centralTwin && deviceContext.connected ? <Monaco data={centralTwin.twin} size='full' /> : progressFetchCentralTwin ? <ProgressIndicator label="Fetching" /> : null}
+          {centralTwin && deviceContext.connected ? <Monaco data={centralTwin.twin} size='full' /> : progressFetchCentralTwin ? <ProgressIndicator label='Fetching' /> : null}
         </div>
         {!cloudUx ? null :
-          <div className="column">
-            <div className="option">
+          <div className='column'>
+            <div className='option'>
               <h5>Platform: Azure IoT Hub</h5>
               <h2>Cloud Twin</h2>
               <label>View the device's twin in the Cloud/IoT Hub using the Service SDK</label>
               <PrimaryButton disabled={!deviceTwinClient} onClick={() => { fetchCloudTwin() }}>Get Cloud Twin</PrimaryButton>
             </div>
-            {cloudTwin && deviceContext.connected ? <Monaco data={cloudTwin} size='full' /> : progressFetchCloudTwin ? <ProgressIndicator label="Fetching" /> : null}
+            {cloudTwin && deviceContext.connected ? <Monaco data={cloudTwin} size='full' /> : progressFetchCloudTwin ? <ProgressIndicator label='Fetching' /> : null}
           </div>
         }
-        <div className="column">
-          <div className="option">
+        <div className='column'>
+          <div className='option'>
             <h5>Platform: Device</h5>
             <h2>Device Twin</h2>
             <label>A simulated version of the device using the Device SDK</label>
-            <div className="btn-bar">
+            <div className='btn-bar'>
               <PrimaryButton disabled={!deviceTwinClient} onClick={() => { fetchDeviceTwin() }}>
                 <span>Get Device Twin</span>
-                <span className='cliploader-spacer'>{progressFetchDeviceTwin ? <ClipLoader size={8} color="#fffff" /> : null}</span>
+                <span className='cliploader-spacer'>{progressFetchDeviceTwin ? <ClipLoader size={8} color='#fffff' /> : null}</span>
               </PrimaryButton>
             </div>
           </div>
@@ -236,33 +236,33 @@ function App() {
             <>
               {deviceTwin && !progressFetchDeviceTwin ? <Monaco data={deviceTwin} size='medium' /> : progressFetchDeviceTwin ? 'Fetching' : 'Click to view the latest version of the Cloud\'s full Twin from the device'}
               <h4>Incoming Desired Twin</h4>
-              {desired ? <Monaco data={desired} size='small' /> : "Waiting... Send a desired property to this device from your cloud based application i.e. IoT Central"}
+              {desired ? <Monaco data={desired} size='small' /> : 'Waiting... Send a desired property to this device from your cloud based application i.e. IoT Central'}
             </>
-            : ""}
+            : ''}
         </div>
-        <div className="column">
-          <div className="option">
+        <div className='column'>
+          <div className='option'>
             <h5>Platform: Device</h5>
             <h2>Report a Device Twin</h2>
             <label>Send a reported device twin to the hub using the Device SDK</label>
             <PrimaryButton disabled={!deviceTwinClient} onClick={() => { sendDeviceTwin() }}>
               <span>Send Reported Device Twin</span>
-              <span className='cliploader-spacer'>{progressSendDeviceTwin ? <ClipLoader size={8} color="#ffffff" /> : null}</span>
+              <span className='cliploader-spacer'>{progressSendDeviceTwin ? <ClipLoader size={8} color='#ffffff' /> : null}</span>
             </PrimaryButton>
           </div>
-          {deviceTwinClient ? <Monaco data={reportedTwin} onChange={setReportedTwin} size='full' /> : ""}
+          {deviceTwinClient ? <Monaco data={reportedTwin} onChange={setReportedTwin} size='full' /> : ''}
         </div>
-        <div className="column">
-          <div className="option">
+        <div className='column'>
+          <div className='option'>
             <h5>Platform: Device</h5>
             <h2>Report Telemetry</h2>
             <label>Send telemetry to the hub using the Device SDK</label>
             <PrimaryButton disabled={!deviceTwinClient} onClick={() => { sendDeviceTelemetry() }}>
               <span>Send Telemetry</span>
-              <span className='cliploader-spacer'>{progressSendDeviceTelemetry ? <ClipLoader size={8} color="#ffffff" /> : null}</span>
+              <span className='cliploader-spacer'>{progressSendDeviceTelemetry ? <ClipLoader size={8} color='#ffffff' /> : null}</span>
             </PrimaryButton>
           </div>
-          {deviceTwinClient ? <Monaco data={reportedTelemetry} onChange={setReportedTelemetry} size='full' /> : ""}
+          {deviceTwinClient ? <Monaco data={reportedTelemetry} onChange={setReportedTelemetry} size='full' /> : ''}
         </div>
       </div>
     </div >
