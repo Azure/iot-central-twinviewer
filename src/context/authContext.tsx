@@ -2,6 +2,7 @@ import { Config } from '../config';
 import * as msal from '@azure/msal-browser';
 import * as React from 'react';
 
+// generic to handle getting an access token for a given scope
 function getAccessTokenForScope(msalInstance: any, scope: any, account: any) {
     const tokenRequest: any = {
         scopes: Array.isArray(scope) ? scope : [scope],
@@ -48,6 +49,14 @@ export const MsalConfig = {
     }
 }
 
+export interface AuthContextSate {
+    authenticated: boolean,
+    loginAccount: any,
+    signIn: any,
+    signOut: any,
+    getAccessToken: any
+}
+
 export const AuthContext = React.createContext({});
 
 export class AuthProvider extends React.PureComponent {
@@ -89,7 +98,7 @@ export class AuthProvider extends React.PureComponent {
         return res.accessToken;
     }
 
-    state = {
+    state: AuthContextSate = {
         authenticated: false,
         loginAccount: {},
         signIn: this.signIn,

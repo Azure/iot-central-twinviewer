@@ -41,6 +41,20 @@ async function getCentralDeviceCreds(deviceId: any, appId: any, authContext: any
         throw err
     }
 }
+
+export interface DeviceContextState {
+    connected: boolean,
+    client: any,
+    appId: string,
+    deviceId: string,
+    scopeId: string,
+    sasKey: string,
+    twinDesired: any,
+    setDevice: any,
+    connectDevice: any
+    disconnectDevice: any
+}
+
 export const DeviceContext = React.createContext({});
 
 export class DeviceProvider extends React.PureComponent {
@@ -86,29 +100,18 @@ export class DeviceProvider extends React.PureComponent {
         this.setState({ twinDesired: data });
     }
 
-    state: {
-        connected: boolean,
-        client: any,
-        appId: string,
-        deviceId: string,
-        scopeId: string,
-        sasKey: string,
-        twinDesired: any,
-        setDevice: any,
-        connectDevice: any
-        disconnectDevice: any
-    } = {
-            connected: false,
-            client: null,
-            appId: '',
-            deviceId: '',
-            scopeId: '',
-            sasKey: '',
-            twinDesired: {},
-            setDevice: this.setDevice.bind(this),
-            connectDevice: this.connectDevice.bind(this),
-            disconnectDevice: this.disconnectDevice.bind(this)
-        }
+    state: DeviceContextState = {
+        connected: false,
+        client: null,
+        appId: '',
+        deviceId: '',
+        scopeId: '',
+        sasKey: '',
+        twinDesired: {},
+        setDevice: this.setDevice.bind(this),
+        connectDevice: this.connectDevice.bind(this),
+        disconnectDevice: this.disconnectDevice.bind(this)
+    }
 
     render() {
         return (

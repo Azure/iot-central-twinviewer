@@ -6,7 +6,7 @@ body {
 
 #root, .page {
   height: 100%;
-  width: 100vw;
+  width: 100%;
 }
 
 .page-initial {
@@ -94,4 +94,8 @@ body {
   display: flex;
   align-items: center;
   outline: none;
+}
+
+.cliploader-spacer {
+  margin-left: 0.25rem;
 }

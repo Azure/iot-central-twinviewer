@@ -85,15 +85,16 @@ async function writeDeviceTelemetry(client: any, payload: any) {
 
 function App() {
 
-  // provide access to authentication and authorization results
+  // provide access to user and device authentication/authorization
   const authContext = React.useContext<any>(AuthContext);
   const deviceContext = React.useContext<any>(DeviceContext);
 
-  // the desired twin payload received when the device is connected
+  // device level state
   const [connected, setConnected] = React.useState<any>(deviceContext.connected);
   const [desired, setDesired] = React.useState<any>({});
   const [deviceTwinClient, setDeviceTwinClient] = React.useState<any>(null);
 
+  // ux level state
   const [helpPanel, showHelpPanel] = React.useState<boolean>(false);
   const [teaching, showTeaching] = React.useState<boolean>(true);
 
@@ -120,26 +121,32 @@ function App() {
     authContext.signIn();
   }, [authContext]);
 
+  // when connected status changes, update the UX
   React.useEffect(() => {
     setConnected(deviceContext.connected);
   }, [deviceContext.connected])
 
+  // when device client is created, update the internal state
   React.useEffect(() => {
     setDeviceTwinClient(deviceContext.client);
   }, [deviceContext.client])
 
+  // when a twin desired is received, update the UX
   React.useEffect(() => {
     setDesired(deviceContext.twinDesired);
   }, [deviceContext.twinDesired])
 
+  // when the internal state device client is changed, fetch all the device data
   React.useEffect(() => {
     if (deviceTwinClient) {
       fetchDeviceTwin();
       fetchCentralTwin();
       fetchCloudTwin();
     }
+    // eslint-disable-next-line
   }, [deviceTwinClient])
 
+  // this is the header UX for the help panel
   const onRenderNavigationContent: IRenderFunction<IPanelProps> = React.useCallback(
     (props, defaultRender) => (
       <div className='help-panel-header'>
@@ -152,15 +159,15 @@ function App() {
     [],
   );
 
+  // this is the button UX for the teaching bubble
   const primaryButtonProps: IButtonProps = {
     children: 'OK',
     onClick: () => showTeaching(false)
-
   };
 
   // main render
   return !authContext.authenticated ?
-    <div className="page page-initial">
+    <div className="page-initial">
       <h2>Please wait</h2>
       <ProgressIndicator label="Waiting for authentication" />
     </div>
@@ -177,7 +184,6 @@ function App() {
         onRenderNavigationContent={onRenderNavigationContent}>
         <DeviceForm />
       </Panel>
-
       {!headerUx ? null : <>
         <div className="header">
           <div className='help'>
@@ -193,40 +199,36 @@ function App() {
         }
       </>
       }
-
       <div className='layout'>
-
         <div className="column">
           <div className="option">
             <h5>Platform: Azure IoT Central</h5>
             <h2>Central Twin</h2>
             <label>View the device's twin using the IoT Central Public REST API</label>
-            <PrimaryButton className="btn-inline" disabled={!deviceTwinClient} onClick={() => { fetchCentralTwin() }}>Get Central Twin</PrimaryButton>
+            <PrimaryButton disabled={!deviceTwinClient} onClick={() => { fetchCentralTwin() }}>Get Central Twin</PrimaryButton>
           </div>
           {centralTwin && deviceContext.connected ? <Monaco data={centralTwin.twin} size='full' /> : progressFetchCentralTwin ? <ProgressIndicator label="Fetching" /> : null}
         </div>
-
         {!cloudUx ? null :
           <div className="column">
             <div className="option">
               <h5>Platform: Azure IoT Hub</h5>
               <h2>Cloud Twin</h2>
               <label>View the device's twin in the Cloud/IoT Hub using the Service SDK</label>
-              <PrimaryButton className="btn-inline" disabled={!deviceTwinClient} onClick={() => { fetchCloudTwin() }}>Get Cloud Twin</PrimaryButton>
+              <PrimaryButton disabled={!deviceTwinClient} onClick={() => { fetchCloudTwin() }}>Get Cloud Twin</PrimaryButton>
             </div>
             {cloudTwin && deviceContext.connected ? <Monaco data={cloudTwin} size='full' /> : progressFetchCloudTwin ? <ProgressIndicator label="Fetching" /> : null}
           </div>
         }
-
         <div className="column">
           <div className="option">
             <h5>Platform: Device</h5>
             <h2>Device Twin</h2>
             <label>A simulated version of the device using the Device SDK</label>
             <div className="btn-bar">
-              <PrimaryButton className="btn-inline" disabled={!deviceTwinClient} onClick={() => { fetchDeviceTwin() }}>
+              <PrimaryButton disabled={!deviceTwinClient} onClick={() => { fetchDeviceTwin() }}>
                 <span>Get Device Twin</span>
-                <span>{progressFetchDeviceTwin ? <ClipLoader size={8} /> : null}</span>
+                <span className='cliploader-spacer'>{progressFetchDeviceTwin ? <ClipLoader size={8} color="#fffff" /> : null}</span>
               </PrimaryButton>
             </div>
           </div>
@@ -238,28 +240,26 @@ function App() {
             </>
             : ""}
         </div>
-
         <div className="column">
           <div className="option">
             <h5>Platform: Device</h5>
             <h2>Report a Device Twin</h2>
             <label>Send a reported device twin to the hub using the Device SDK</label>
-            <PrimaryButton className="btn-inline" disabled={!deviceTwinClient} onClick={() => { sendDeviceTwin() }}>
+            <PrimaryButton disabled={!deviceTwinClient} onClick={() => { sendDeviceTwin() }}>
               <span>Send Reported Device Twin</span>
-              <span>{progressSendDeviceTwin ? <ClipLoader size={8} /> : null}</span>
+              <span className='cliploader-spacer'>{progressSendDeviceTwin ? <ClipLoader size={8} color="#ffffff" /> : null}</span>
             </PrimaryButton>
           </div>
           {deviceTwinClient ? <Monaco data={reportedTwin} onChange={setReportedTwin} size='full' /> : ""}
         </div>
-
         <div className="column">
           <div className="option">
             <h5>Platform: Device</h5>
             <h2>Report Telemetry</h2>
             <label>Send telemetry to the hub using the Device SDK</label>
-            <PrimaryButton className="btn-inline" disabled={!deviceTwinClient} onClick={() => { sendDeviceTelemetry() }}>
+            <PrimaryButton disabled={!deviceTwinClient} onClick={() => { sendDeviceTelemetry() }}>
               <span>Send Telemetry</span>
-              <span>{progressSendDeviceTelemetry ? <ClipLoader size={8} /> : null}</span>
+              <span className='cliploader-spacer'>{progressSendDeviceTelemetry ? <ClipLoader size={8} color="#ffffff" /> : null}</span>
             </PrimaryButton>
           </div>
           {deviceTwinClient ? <Monaco data={reportedTelemetry} onChange={setReportedTelemetry} size='full' /> : ""}
