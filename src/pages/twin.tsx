@@ -109,8 +109,6 @@ function App() {
   const cloudUx = urlParams && urlParams.get('cloud') && urlParams.get('cloud') === "false" ? false : true;
 
   // all the async data loading methods
-  //const [progressFetchDeviceClient, deviceTwinClient, , fetchDeviceTwinClient] = usePromise({ promiseFn: () => deviceContext.connectDevice() });
-
   const [progressFetchCentralTwin, centralTwin, , fetchCentralTwin] = usePromise({ promiseFn: () => getCentralTwin(deviceContext.deviceId, deviceContext.appId, authContext) });
   const [progressFetchCloudTwin, cloudTwin, , fetchCloudTwin] = usePromise({ promiseFn: () => getCloudTwin(deviceContext.deviceId, deviceContext.appId, authContext) });
   const [progressFetchDeviceTwin, deviceTwin, , fetchDeviceTwin] = usePromise({ promiseFn: () => getDeviceTwin(deviceTwinClient) });

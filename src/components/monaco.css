@@ -1,6 +1,6 @@
 .monaco {
     width: 100%;
-    box-shadow: 0px 0px 0.25rem 0px #a0a0a0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 0 1px rgba(0, 0, 0, 0.16);
 }
 
 .monaco-full {

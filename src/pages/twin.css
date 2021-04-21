@@ -1,5 +1,5 @@
 body {
-  background-color: #cfcfcf;
+  background-color: #f7f7f7;
   height: 100%;
   width: 100%;
 }
@@ -13,51 +13,8 @@ body {
   padding: 1rem;
 }
 
-a {
-  text-decoration: none;
-}
-
-b {
-  font-weight: 600;
-}
-
-h1, h2, h3 {
-  margin: 0 1rem 0 0;
-}
-
-h5 {
-  margin: 0;
-  font-weight: 200;
-  font-size: 0.75rem;
-}
-
-button {
-  cursor: pointer;
-  padding: 1rem;
-  font-weight: 600;
-  border-radius: 4px;
-}
-
-button:hover {
-  background-color: lightgray;
-}
-
-button:disabled {
-  cursor: not-allowed;
-}
-
 .btn-bar {
   display: flex;
-}
-
-.btn-inline {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.btn-inline>span:first-child {
-  margin-right: 0.5rem;
 }
 
 .page {
@@ -69,7 +26,7 @@ button:disabled {
 
 .layout {
   flex-grow: 1;
-  padding: 0 1rem 0 1rem;
+  padding: 0 1rem 0 1.5rem;
   display: flex;
   height: 100%;
   overflow-y: auto;
@@ -83,10 +40,6 @@ button:disabled {
   padding-right: 1rem;
 }
 
-.layout>div .editor {
-  margin-top: 1rem;
-}
-
 .option {
   height: 8rem;
 }
@@ -96,41 +49,32 @@ button:disabled {
   margin-bottom: 0.5rem;
 }
 
-.option button:not(:last-child) {
-  margin-right: 0.5rem;
-}
-
-.tall-editor {
-  height: calc(100vh - 17rem);
-}
-
-.small-editor {
-  height: 40rem;
-}
-
-.last-editor {
-  height: calc(100vh - 61rem);
-}
-
 .header {
   white-space: nowrap;
   overflow: hidden;
   flex-shrink: 0;
   height: 2rem;
   line-height: 2rem;
-  padding: 0.5rem 1rem 0.5rem 0;
+  padding: 0.5rem 1rem 0.5rem 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-weight: 900;
 }
 
-.help i {
-  margin-right: 0.25rem;
+.header>div:nth-child(2) {
+  font-weight: 600;
 }
 
-.help button {
-  font-size: 1.2rem;
+.help-panel-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 1.5rem 1rem;
+}
+
+.help-panel-header .help>button {
+  cursor: pointer;
+  font-size: 1rem;
   background-color: transparent;
   border: none;
   display: flex;
@@ -138,8 +82,16 @@ button:disabled {
   outline: none;
 }
 
-.help-panel-header {
-  width: 100%;
+.help i {
+  margin-right: 0.25rem;
+}
+
+.help button {
+  cursor: pointer;
+  font-size: 1rem;
+  background-color: transparent;
+  border: none;
   display: flex;
   align-items: center;
+  outline: none;
 }
